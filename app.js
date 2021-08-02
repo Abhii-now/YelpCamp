@@ -18,8 +18,8 @@ const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 // const { process } = require('ipaddr.js');
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
-const secret = process.env.secret || 'thisshouldbeabettersecret!'
+const dbUrl = process.env.DB_URL;
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!'
 const MongoStore = require('connect-mongodb-session')(session);
 
 mongoose.connect(dbUrl, {
@@ -157,7 +157,7 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err })
 })
 
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
     console.log(`Serving on port ${port}`)
