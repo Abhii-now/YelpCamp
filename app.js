@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
     require('dotenv').config();
 }
+
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -17,10 +18,10 @@ const mongoSanitize = require('express-mongo-sanitize');
 const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
-// const { process } = require('ipaddr.js');
+
+const MongoDBStore = require("connect-mongo");
+
 const dbUrl = process.env.DB_URL;
-const secret = process.env.SECRET || 'thisshouldbeabettersecret!'
-const MongoStore = require('connect-mongodb-session')(session);
 
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
@@ -47,15 +48,16 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(mongoSanitize({
     replaceWith: '_'
 }))
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
 
-const store = new MongoStore({
-    url: dbUrl,
+const store = new MongoDBStore({
+    mongoUrl: dbUrl,
     secret,
-    touchAfter: 24 * 3600
-})
+    touchAfter: 24 * 60 * 60
+});
 
 store.on("error", function (e) {
-    console.log("SESSION STORE ERROR!!", e);
+    console.log("SESSION STORE ERROR", e)
 })
 
 const sessionConfig = {
@@ -113,7 +115,7 @@ app.use(
                 "'self'",
                 "blob:",
                 "data:",
-                "https://res.cloudinary.com/dcrpug7ll/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+                "https://res.cloudinary.com/douqbebwk/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
                 "https://images.unsplash.com/",
             ],
             fontSrc: ["'self'", ...fontSrcUrls],
@@ -158,9 +160,6 @@ app.use((err, req, res, next) => {
 })
 
 const port = process.env.PORT || 3000;
-
 app.listen(port, () => {
     console.log(`Serving on port ${port}`)
 })
-
-
