@@ -17,6 +17,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
+// const { process } = require('ipaddr.js');
 const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
 const secret = process.env.secret || 'thisshouldbeabettersecret!'
 const MongoStore = require('connect-mongodb-session')(session);
@@ -156,8 +157,10 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err })
 })
 
-app.listen(3000, () => {
-    console.log('Serving on port 3000')
+const port = process.env.port || 3000;
+
+app.listen(port, () => {
+    console.log(`Serving on port ${port}`)
 })
 
 
